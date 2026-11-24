@@ -69,7 +69,7 @@ Headline status is `ready`, `at-risk`, or `not-ready`, with a 0–100 score. See
 You need Node.js 20+ (the app runtime is `nodejs24.x`), the [Forge CLI](https://developer.atlassian.com/platform/forge/getting-started/) 16+, and an Atlassian account.
 
 ```bash
-git clone https://codeberg.org/wynnter/keel.git
+git clone https://github.com/w1nter625/keel.git   # mirror: https://codeberg.org/wynnter/keel.git
 cd keel
 npm install
 npm test

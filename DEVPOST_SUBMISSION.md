@@ -24,7 +24,7 @@ Required for an eligible submission:
 - **Setup / testing instructions** for a judge's environment (see Install in the README).
 - Select the **category** and any **bonus prizes**, plus a short write-up for each bonus.
 
-The official rules do not require a public source repository, but a repo helps judges review the implementation. This project's source is at https://codeberg.org/wynnter/keel.
+The official rules do not require a public source repository, but a repo helps judges review the implementation. This project's source is at https://github.com/w1nter625/keel (mirror: https://codeberg.org/wynnter/keel).
 
 Standard Devpost project form fields (Inspiration, What it does, How we built it, Challenges, Accomplishments, What we learned, What's next, Built with) should also be completed in English.
 
@@ -40,7 +40,7 @@ The hackathon is open to individuals who are **at least the age of majority wher
 | --- | --- |
 | Project name | Keel |
 | Tagline | Record the why. Ship with confidence. |
-| Repo | https://codeberg.org/wynnter/keel |
+| Repo | https://github.com/w1nter625/keel (mirror: https://codeberg.org/wynnter/keel) |
 | Demo video | *YouTube public URL, once the file at `video/keel-demo.mp4` is uploaded* |
 | Installation link | *Not available from the CLI. Enable Sharing in the developer console Distribution page for app `ari:cloud:ecosystem::app/6d480529-4bd1-412e-92c2-1bf5cd27b8b0`, copy the install link, and paste it here.* |
 | Category | Apps for Software Teams |
@@ -130,7 +130,7 @@ Keel **consumes** Teamwork Graph through curated queries (`jiraWorkItemGoals`, `
 ## Judge setup (paste into the instructions field)
 
 1. Open the installation link (once Sharing is enabled) and install Keel on a Jira Cloud site you administer. Accept the requested scopes.
-2. Or clone https://codeberg.org/wynnter/keel, run `npm install`, `forge login`, `forge deploy -e production`, and `forge install -e production --site YOUR-SITE.atlassian.net --product Jira`.
+2. Or clone https://github.com/w1nter625/keel, run `npm install`, `forge login`, `forge deploy -e production`, and `forge install -e production --site YOUR-SITE.atlassian.net --product Jira`.
 3. Create or open a work item. Use **View app actions** (Apps grid) and select **Keel**. The panel is not a permanently visible sidebar.
 4. In Rovo Chat, open the agent selector → Browse Agents → enable **Keel**.
 5. Optional: record a decision (title + why), then ask the Keel agent: "Is this work item ready to ship?"
