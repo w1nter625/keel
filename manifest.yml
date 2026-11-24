@@ -1,0 +1,287 @@
+modules:
+  jira:issuePanel:
+    - key: keel-issue-panel
+      resource: issue-panel
+      resolver:
+        function: resolver
+      render: native
+      title: Keel
+      icon: resource:icons;keel-icon.svg
+      viewportSize: large
+  jira:projectPage:
+    - key: keel-project-page
+      resource: project-page
+      resolver:
+        function: resolver
+      render: native
+      title: Keel decisions
+      icon: resource:icons;keel-icon.svg
+  rovo:agent:
+    - key: keel-agent
+      name: Keel
+      description: Records the why behind Jira work and checks whether a team can ship
+        with confidence.
+      icon: resource:icons;keel-icon.svg
+      prompt: resource:agent-prompt;keel-agent.md
+      conversationStarters:
+        - Is this work item ready to ship?
+        - Why did we decide this?
+        - What decisions are still open?
+        - Who should I ask about this work?
+      actions:
+        - list-decisions
+        - record-decision
+        - update-decision
+        - delete-decision
+        - get-ship-readiness
+        - get-work-context
+        - search-decisions
+  rovo:mcp:
+    - key: keel-mcp
+      name: Keel MCP
+      tools:
+        - list-decisions
+        - record-decision
+        - update-decision
+        - delete-decision
+        - get-ship-readiness
+        - get-work-context
+        - search-decisions
+  action:
+    - key: list-decisions
+      name: List decisions
+      function: listDecisions
+      actionVerb: GET
+      description: >
+        Lists decision records Keel has stored for a Jira work item. Use this
+        when the user asks what was decided, which decisions are open, or to
+        review the why behind an issue. Leave issueKey empty to use the work
+        item currently open on screen.
+      inputs:
+        issueKey:
+          title: Issue key
+          type: string
+          required: false
+          description: Jira work item key, for example PROJ-12. Leave empty to use the
+            issue open on screen.
+        status:
+          title: Status filter
+          type: string
+          required: false
+          description: Optional filter. One of proposed, accepted, rejected, superseded.
+            Leave empty for all.
+    - key: record-decision
+      name: Record a decision
+      function: recordDecision
+      actionVerb: CREATE
+      description: >
+        Creates a new decision record on a Jira work item. Use this when the
+        user wants to capture a why, an ADR-style choice, or lock in an accepted
+        option. Default status is proposed unless the user clearly accepted or
+        rejected it.
+      inputs:
+        issueKey:
+          title: Issue key
+          type: string
+          required: false
+          description: Jira work item key, for example PROJ-12. Leave empty to use the
+            issue open on screen.
+        title:
+          title: Decision title
+          type: string
+          required: true
+          description: Short name for the decision, for example Use Stripe Checkout.
+        rationale:
+          title: Rationale
+          type: string
+          required: true
+          description: Why this decision was made or is being proposed.
+        alternatives:
+          title: Alternatives
+          type: string
+          required: false
+          description: Options that were considered and not chosen.
+        status:
+          title: Status
+          type: string
+          required: false
+          description: One of proposed, accepted, rejected. Defaults to proposed.
+        owner:
+          title: Owner
+          type: string
+          required: false
+          description: Display name or email of the person accountable for the decision.
+    - key: update-decision
+      name: Update a decision
+      function: updateDecision
+      actionVerb: UPDATE
+      description: >
+        Updates an existing Keel decision. Use this to accept, reject,
+        supersede, or edit the rationale of a decision that already exists. You
+        must pass the decision id returned by List decisions.
+      inputs:
+        issueKey:
+          title: Issue key
+          type: string
+          required: false
+          description: Jira work item key that owns the decision. Leave empty to use the
+            issue open on screen.
+        decisionId:
+          title: Decision id
+          type: string
+          required: true
+          description: The id of the decision to update.
+        status:
+          title: Status
+          type: string
+          required: false
+          description: New status. One of proposed, accepted, rejected, superseded.
+        title:
+          title: Title
+          type: string
+          required: false
+          description: Updated short name for the decision.
+        rationale:
+          title: Rationale
+          type: string
+          required: false
+          description: Updated why.
+        alternatives:
+          title: Alternatives
+          type: string
+          required: false
+          description: Updated alternatives considered.
+        owner:
+          title: Owner
+          type: string
+          required: false
+          description: Updated owner name.
+    - key: delete-decision
+      name: Delete a decision
+      function: deleteDecision
+      actionVerb: DELETE
+      description: >
+        Permanently deletes a Keel decision from a Jira work item. Use this
+        when the user asks to remove or delete a decision. Pass the decision
+        id returned by List decisions. This cannot be undone.
+      inputs:
+        issueKey:
+          title: Issue key
+          type: string
+          required: false
+          description: Jira work item key that owns the decision. Leave empty to use the
+            issue open on screen.
+        decisionId:
+          title: Decision id
+          type: string
+          required: true
+          description: The id of the decision to delete.
+    - key: get-ship-readiness
+      name: Get ship readiness
+      function: getShipReadiness
+      actionVerb: GET
+      description: >
+        Scores whether a Jira work item is ready to ship, using Keel decisions,
+        Jira blockers and sub-tasks, and Teamwork Graph goals, pull requests,
+        and deployments. Use for can we ship, or go-live checks.
+      inputs:
+        issueKey:
+          title: Issue key
+          type: string
+          required: false
+          description: Jira work item key, for example PROJ-12. Leave empty to use the
+            issue open on screen.
+    - key: get-work-context
+      name: Get work context
+      function: getWorkContext
+      actionVerb: GET
+      description: >
+        Returns people, teams, goals, comments, pull requests, and deployments
+        around a Jira work item from Teamwork Graph, plus assignee and reporter.
+        Use for who should I ask, or who is involved.
+      inputs:
+        issueKey:
+          title: Issue key
+          type: string
+          required: false
+          description: Jira work item key, for example PROJ-12. Leave empty to use the
+            issue open on screen.
+    - key: search-decisions
+      name: Search decisions
+      function: searchDecisions
+      actionVerb: GET
+      description: >
+        Searches Keel decision records in a Jira project by keyword or status.
+        Use this for what have we decided about payments, or to find open
+        decisions across a project. Leave projectKey empty to infer it from the
+        issue open on screen.
+      inputs:
+        projectKey:
+          title: Project key
+          type: string
+          required: false
+          description: Jira project key, for example PROJ. Leave empty to infer from the
+            issue open on screen.
+        query:
+          title: Search query
+          type: string
+          required: false
+          description: Optional keyword to match against title, rationale, or alternatives.
+        status:
+          title: Status filter
+          type: string
+          required: false
+          description: Optional filter. One of proposed, accepted, rejected, superseded.
+  function:
+    - key: resolver
+      handler: index.handler
+    - key: listDecisions
+      handler: index.listDecisions
+    - key: recordDecision
+      handler: index.recordDecision
+    - key: updateDecision
+      handler: index.updateDecision
+    - key: deleteDecision
+      handler: index.deleteDecision
+    - key: getShipReadiness
+      handler: index.getShipReadiness
+    - key: getWorkContext
+      handler: index.getWorkContext
+    - key: searchDecisions
+      handler: index.searchDecisions
+resources:
+  - key: issue-panel
+    path: src/frontend/issue-panel.jsx
+  - key: project-page
+    path: src/frontend/project-page.jsx
+  - key: agent-prompt
+    path: prompts
+  - key: icons
+    path: static/icons
+permissions:
+  scopes:
+    - storage:app
+    - read:jira-user
+    - read:jira-work
+    - write:jira-work
+    - read:graph:issue:jira
+    - read:graph:issue-status:jira
+    - read:graph:issue-comment:jira
+    - read:graph:user:atlassian
+    - read:graph:team:atlassian
+    - read:graph:goal:atlassian
+    - read:graph:deployment:external
+    - read:graph:pull-request:external
+app:
+  runtime:
+    name: nodejs24.x
+    memoryMB: 512
+    architecture: arm64
+  id: ari:cloud:ecosystem::app/6d480529-4bd1-412e-92c2-1bf5cd27b8b0
+  rovo:
+    tag: keel
+    description: Record the why behind Jira work and check if a team can ship.
+    keywords:
+      - decisions
+      - ship-readiness
+      - context
